@@ -1,0 +1,7 @@
+source https://www.nuget.org/api/v2
+source monogame-develop
+
+framework: >= net461
+nuget FAKE
+nuget FSharp.Core
+nuget MonoGame.Framework.WindowsDX 3.7.0.1034-develop develop

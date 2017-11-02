@@ -5,7 +5,10 @@
     <TargetFramework>net461</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="core/Main.fs" />
+    <Compile Include="core/ComponentTypes.fs" />
+    <Compile Include="core/ComponentFunctions.fs" />
+    <Compile Include="managers/VisualManager.fs" />
+    <Compile Include="Main.fs" />
     <Compile Include="GameOff2017.fs" />
     <None Include="App.config" />
   </ItemGroup>

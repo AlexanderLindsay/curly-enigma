@@ -11,7 +11,7 @@ open System
 // Build variables
 // --------------------------------------------------------------------------------------
 
-let buildDir  = "./build/"
+let publishDir = "./publish"
 let appReferences = !! "/**/*.fsproj"
 let dotnetcliVersion = "2.0.2"
 let mutable dotnetExePath = "dotnet"
@@ -44,7 +44,7 @@ let runDotnet workingDir args =
 // --------------------------------------------------------------------------------------
 
 Target "Clean" (fun _ ->
-    CleanDirs [buildDir]
+    CleanDirs [publishDir]
 )
 
 Target "InstallDotNetCLI" (fun _ ->
@@ -67,6 +67,15 @@ Target "Build" (fun _ ->
     )
 )
 
+Target "Publish" (fun _ ->
+    appReferences
+    |> Seq.iter (fun p ->
+        let dir = System.IO.Path.GetDirectoryName p
+        let args = "publish -c Release -o ..\publish"
+        runDotnet dir args
+    )
+)
+
 // --------------------------------------------------------------------------------------
 // Build order
 // --------------------------------------------------------------------------------------
@@ -75,5 +84,6 @@ Target "Build" (fun _ ->
   ==> "InstallDotNetCLI"
   ==> "Restore"
   ==> "Build"
+  ==> "Publish"
 
 RunTargetOrDefault "Build"

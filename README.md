@@ -14,4 +14,16 @@ This project was built using [Visual Studio Code](https://code.visualstudio.com/
 1. Run .paket/paket.exe install
 1. Press `F5` to launch the game in debug mode
 
+# Content Pipeline
+
+New textures and other content to the project will have to be built using the Monogame Content Pipeline, which comes with Monogame when it is installed.
+
+1. Download and Install [Monogame](http://www.monogame.net/downloads/)
+1. Open the `contentPipeline/contentBuilder.mgcb` with the Pipeline program
+1. Add the new content to the files folder in `contentPipeline/files`
+1. Use the build command in the Pipeline program
+1. FAKE will take care of moving the generated files to the content folder in GameOff2017, and MSBuild will take it from there
+
+# Notes
+
 While the game is being built with Monogame and could in theory support additional platforms, it currently only supports windows.

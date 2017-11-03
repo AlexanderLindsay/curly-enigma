@@ -12,6 +12,8 @@ open System
 // --------------------------------------------------------------------------------------
 
 let publishDir = "./publish"
+let contentDir = "./GameOff2017/content/"
+let pipelineDir = "./contentPipeline/results/files"
 let appReferences = !! "/**/*.fsproj"
 let dotnetcliVersion = "2.0.2"
 let mutable dotnetExePath = "dotnet"
@@ -43,10 +45,6 @@ let runDotnet workingDir args =
 // Targets
 // --------------------------------------------------------------------------------------
 
-Target "Clean" (fun _ ->
-    CleanDirs [publishDir]
-)
-
 Target "InstallDotNetCLI" (fun _ ->
     dotnetExePath <- DotNetCli.InstallDotNetSDK dotnetcliVersion
 )
@@ -59,12 +57,20 @@ Target "Restore" (fun _ ->
     )
 )
 
+Target "MoveContent" (fun _ ->
+    CopyDir contentDir pipelineDir allFiles
+)
+
 Target "Build" (fun _ ->
     appReferences
     |> Seq.iter (fun p ->
         let dir = System.IO.Path.GetDirectoryName p
         runDotnet dir "build"
     )
+)
+
+Target "CleanPublish" (fun _ ->
+    CleanDirs [publishDir]
 )
 
 Target "Publish" (fun _ ->
@@ -80,10 +86,11 @@ Target "Publish" (fun _ ->
 // Build order
 // --------------------------------------------------------------------------------------
 
-"Clean"
-  ==> "InstallDotNetCLI"
+"InstallDotNetCLI"
   ==> "Restore"
+  ==> "MoveContent"
   ==> "Build"
+  ==> "CleanPublish"
   ==> "Publish"
 
 RunTargetOrDefault "Build"

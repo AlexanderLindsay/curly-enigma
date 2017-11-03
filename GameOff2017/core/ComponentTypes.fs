@@ -11,7 +11,6 @@ type WorldPositionComponent =
     {
     EntityId: EntityId;
     Position: float32*float32;
-    Size: int*int;
     }
 
 type RGBA =
@@ -22,18 +21,41 @@ type RGBA =
     A: int;
     }
 
+type TextureId =
+| TextureId of string
+
 type ColoredSquareComponent =
     {
     EntityId: EntityId;
     Color: RGBA;
+    Size: int*int;
+    }
+
+type TexturedComponent =
+    {
+    EntityId: EntityId;
+    TextureId: TextureId;
     }
 
 type VisualComponent =
     | ColoredSquare of ColoredSquareComponent
+    | Textured of TexturedComponent
 
     member this.EntityId =
         match this with
         | ColoredSquare csc -> csc.EntityId
+        | Textured t -> t.EntityId
+    
+    member this.UpdateId id =
+        match this with
+        | ColoredSquare csc ->
+            { csc with 
+                EntityId = id
+            } |> ColoredSquare
+        | Textured t ->
+            { t with 
+                EntityId = id
+            } |> Textured
 
 type ComponentType =
     | WorldPosition
@@ -47,6 +69,16 @@ type Component =
         match this with
         | WorldPosition wp -> wp.EntityId
         | Visual v -> v.EntityId
+    
+    member this.UpdateId id =
+        match this with
+        | WorldPosition wp ->
+            { wp with
+                EntityId = id
+            } |> WorldPosition
+        | Visual v -> 
+            v.UpdateId id
+            |> Visual
     
     member this.Type =
         match this with

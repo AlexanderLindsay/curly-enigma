@@ -10,6 +10,17 @@ let createColor (r,g,b,a) =
         A = a;
     }
 
+// type Getters/Checkers
+let getVisual comp =
+    match comp with
+    | WorldPosition _ -> None
+    | Visual v -> Some v
+
+let getTextured visual =
+    match visual with
+    | ColoredSquare _ -> None
+    | Textured t -> Some t
+
 //Component System Functions
 let buildComponentSystem (components: seq<Component>) =
     components

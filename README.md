@@ -1,7 +1,11 @@
-# Introduction
+# Game for Game Off 2017 (title tbd)
+
+[<img src="https://aml-code.visualstudio.com/_apis/public/build/definitions/d0e34213-d2b1-43e2-98a1-89d3dffa820a/3/badge"/>](https://aml-code.visualstudio.com/Github-Integration/_build/index?definitionId={3})
+
+## Introduction
 A game built with [F#](http://fsharp.org/) and [MonoGame](http://www.monogame.net/) for the [2017 Game Off](https://itch.io/jam/game-off-2017) game 
 
-# Getting Started
+## Getting Started
 This project was built using [Visual Studio Code](https://code.visualstudio.com/) as a development environment and that is the setup that is described here. Visual Studio should work as well, but is not described.
 
 1. Download [Visual Studio Code](https://code.visualstudio.com/Download) and install
@@ -14,7 +18,7 @@ This project was built using [Visual Studio Code](https://code.visualstudio.com/
 1. Run .paket/paket.exe install
 1. Press `F5` to launch the game in debug mode
 
-# Content Pipeline
+## Content Pipeline
 
 New textures and other content to the project will have to be built using the Monogame Content Pipeline, which comes with Monogame when it is installed.
 
@@ -24,6 +28,6 @@ New textures and other content to the project will have to be built using the Mo
 1. Use the build command in the Pipeline program
 1. FAKE will take care of moving the generated files to the content folder in GameOff2017, and MSBuild will take it from there
 
-# Notes
+## Notes
 
 While the game is being built with Monogame and could in theory support additional platforms, it currently only supports windows.

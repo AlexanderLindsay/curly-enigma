@@ -58,6 +58,15 @@ let simpleEntity (position, size, color) =
     let entityType = Rectangle ((RectangleSize size), (RectangleColor color))
     createEntity position entityType
 
+let movingEntity (position, velocity, texture) =
+    let entityType = Texture texture
+    let movement =
+        {
+        EntityId = UninitalizedEntity
+        Velocity = velocity
+        } |> Movement
+    movement :: createEntity position entityType
+
 let texturedEntity (position, texture) =
     let entityType = Texture texture
     createEntity position entityType

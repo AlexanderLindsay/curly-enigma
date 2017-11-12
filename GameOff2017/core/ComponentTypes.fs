@@ -13,6 +13,12 @@ type WorldPositionComponent =
     Position: float32*float32;
     }
 
+type MovementComponent =
+    {
+    EntityId: EntityId;
+    Velocity: float32*float32;
+    }
+
 type RGBA =
     {
     R: int;
@@ -60,15 +66,18 @@ type VisualComponent =
 type ComponentType =
     | WorldPosition
     | Visual
+    | Movement
 
 type Component =
     | WorldPosition of WorldPositionComponent
     | Visual of VisualComponent
+    | Movement of MovementComponent
 
     member this.EntityId =
         match this with
         | WorldPosition wp -> wp.EntityId
         | Visual v -> v.EntityId
+        | Movement m -> m.EntityId
     
     member this.UpdateId id =
         match this with
@@ -79,18 +88,29 @@ type Component =
         | Visual v -> 
             v.UpdateId id
             |> Visual
+        | Movement m ->
+            { m with
+                EntityId = id
+            } |> Movement
     
     member this.Type =
         match this with
         | WorldPosition _ -> ComponentType.WorldPosition
         | Visual _ -> ComponentType.Visual
+        | Movement _ -> ComponentType.Movement
 
 type ComponentGroup =
     {
         WorldPosition: WorldPositionComponent option;
         Visual: VisualComponent option;
+        Movement: MovementComponent option;
     }
-let emptyGroup = { WorldPosition = None; Visual = None; }
+let emptyGroup =
+    { 
+    WorldPosition = None;
+    Visual = None;
+    Movement = None;
+    }
 
 type ComponentSystem =
     | ComponentSystem of Map<ComponentType, seq<Component>>

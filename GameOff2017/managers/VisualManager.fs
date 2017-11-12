@@ -6,11 +6,6 @@ open Microsoft.Xna.Framework.Graphics
 open Core.Component.Types
 open Core.Component.Functions
 
-let private neededComponents = [
-    ComponentType.WorldPosition;
-    ComponentType.Visual;
-]
-
 let private colorFromRGBA rgba =
     Color(rgba.R, rgba.G, rgba.B, rgba.A)
 
@@ -35,7 +30,7 @@ let private buildTexture (graphics: GraphicsDeviceManager) getTexture visual =
 
 let drawComponents (graphics: GraphicsDeviceManager) textures (spriteBatch: SpriteBatch) system =
     system
-    |> getEntityGroupings neededComponents 
+    |> toEntityGroup 
     |> Seq.iter (fun group ->
 
         let pos = group.WorldPosition

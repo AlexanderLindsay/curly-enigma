@@ -7,6 +7,7 @@ open Component.Types
 open Component.Functions
 open Managers
 open EntityGenerator
+open System
 
 type GameRoot () as gr =
     inherit Game()
@@ -22,6 +23,7 @@ type GameRoot () as gr =
             [
                 simpleEntity ((50,50), (20, 20), (120, 200, 10, 255));
                 texturedEntity ((100, 100), "dot")
+                movingEntity ((200,200), (0.5f,0.5f), "dot")
             ]
             |> List.toSeq
             |> Seq.mapi initalizeEntities
@@ -44,6 +46,13 @@ type GameRoot () as gr =
         ()
 
     override gr.Update (gameTime) =
+        let current = componentSystem.Value
+        componentSystem <- lazy (
+            current
+            |> toEntityGroup
+            |> Seq.map MovementManager.resolveVelocities
+            |> fromEntityGroup
+        )
         do componentSystem.Force () |> ignore
         ()
     

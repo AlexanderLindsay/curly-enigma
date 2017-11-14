@@ -27,6 +27,9 @@ type RGBA =
     A: int;
     }
 
+type EffectId =
+| EffectId of string
+
 type TextureId =
 | TextureId of string
 
@@ -41,6 +44,7 @@ type TexturedComponent =
     {
     EntityId: EntityId;
     TextureId: TextureId;
+    Color: RGBA;
     }
 
 type VisualComponent =

@@ -6,12 +6,12 @@ open Core.Component.Functions
 type private RectangleSize =
     | RectangleSize of (int*int)
 
-type private RectangleColor =
-    | RectangleColor of (int*int*int*int)
+type private EntityColor =
+    | EntityColor of (int*int*int*int)
 
 type private EntityType =
-    | Rectangle of RectangleSize*RectangleColor
-    | Texture of string
+    | Rectangle of RectangleSize*EntityColor
+    | Texture of string*EntityColor
 
 let private createPositionComponent id position =
     let (x,y) = position
@@ -24,18 +24,20 @@ let private createPositionComponent id position =
 
 let private createRectangle id size color =
     let (RectangleSize rs) = size
-    let (RectangleColor rc) = color
+    let (EntityColor ec) = color
     {
         EntityId = id;
-        Color = createColor rc;
+        Color = createColor ec;
         Size = rs;
     }
     |> ColoredSquare
 
-let private createTexture id name =
+let private createTexture id name color =
+    let (EntityColor ec) = color
     {
         EntityId = id;
         TextureId = TextureId name;
+        Color = createColor ec 
     }
     |> Textured
 
@@ -47,19 +49,19 @@ let private createEntity position entityType =
         match entityType with
         | Rectangle (size, color) ->
             createRectangle entityId size color
-        | Texture name ->
-            createTexture entityId name
+        | Texture (name, color) ->
+            createTexture entityId name color
     [
         WorldPosition positionComp;
         Visual visualComp
     ]
 
 let simpleEntity (position, size, color) =
-    let entityType = Rectangle ((RectangleSize size), (RectangleColor color))
+    let entityType = Rectangle ((RectangleSize size), (EntityColor color))
     createEntity position entityType
 
-let movingEntity (position, velocity, texture) =
-    let entityType = Texture texture
+let movingEntity (position, velocity, texture, color) =
+    let entityType = Texture (texture, color |> EntityColor)
     let movement =
         {
         EntityId = UninitalizedEntity
@@ -67,8 +69,8 @@ let movingEntity (position, velocity, texture) =
         } |> Movement
     movement :: createEntity position entityType
 
-let texturedEntity (position, texture) =
-    let entityType = Texture texture
+let texturedEntity (position, texture, color) =
+    let entityType = Texture (texture, color |> EntityColor)
     createEntity position entityType
 
 let initalizeEntities index (components: Component list) =

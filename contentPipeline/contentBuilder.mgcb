@@ -25,3 +25,9 @@
 /processorParam:TextureFormat=Color
 /build:files/dot.png
 
+#begin files/SetColor.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:files/SetColor.fx
+

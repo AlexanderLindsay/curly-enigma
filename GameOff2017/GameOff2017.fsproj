@@ -8,6 +8,7 @@
     <Compile Include="core/ComponentFunctions.fs" />
     <Compile Include="managers/VisualManager.fs" />
     <Compile Include="managers/TextureManager.fs" />
+    <Compile Include="managers/EffectManager.fs" />
     <Compile Include="managers/MovementManager.fs" />
     <Compile Include="EntityGenerator.fs" />
     <Compile Include="Main.fs" />

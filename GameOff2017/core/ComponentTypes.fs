@@ -7,10 +7,15 @@ type EntityId =
 type Entity =
     { Id: EntityId }
 
+type Collider =
+    | NoCollision
+    | Square of float32*float32
+
 type WorldPositionComponent =
     {
     EntityId: EntityId;
     Position: float32*float32;
+    Collider: Collider;
     }
 
 type MovementComponent =
@@ -105,12 +110,14 @@ type Component =
 
 type ComponentGroup =
     {
+        EntityId: EntityId;
         WorldPosition: WorldPositionComponent option;
         Visual: VisualComponent option;
         Movement: MovementComponent option;
     }
 let emptyGroup =
     { 
+    EntityId = UninitalizedEntity;
     WorldPosition = None;
     Visual = None;
     Movement = None;

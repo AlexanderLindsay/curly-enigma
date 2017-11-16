@@ -7,7 +7,7 @@ open Core.Component.Types
 open Core.Component.Functions
 open Microsoft.Xna.Framework.Graphics
 
-let loadEffects (content: Content.ContentManager) (system: ComponentSystem) =
+let loadEffects (content: Content.ContentManager) =
     ["setColor"]
     |> List.map (fun e -> 
         let effectId = EffectId e

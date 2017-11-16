@@ -13,13 +13,14 @@ type private EntityType =
     | Rectangle of RectangleSize*EntityColor
     | Texture of string*EntityColor
 
-let private createPositionComponent id position =
+let private createPositionComponent id position size =
     let (x,y) = position
     let fx = float32 x
     let fy = float32 y
     {
         EntityId = id;
         Position = (fx,fy);
+        Collider = Square size
     }
 
 let private createRectangle id size color =
@@ -41,9 +42,9 @@ let private createTexture id name color =
     }
     |> Textured
 
-let private createEntity position entityType =
+let private createEntity position size entityType =
     let entityId = UninitalizedEntity
-    let positionComp = createPositionComponent entityId position
+    let positionComp = createPositionComponent entityId position size
 
     let visualComp =
         match entityType with
@@ -56,22 +57,22 @@ let private createEntity position entityType =
         Visual visualComp
     ]
 
-let simpleEntity (position, size, color) =
+let simpleEntity (position, collision, size, color) =
     let entityType = Rectangle ((RectangleSize size), (EntityColor color))
-    createEntity position entityType
+    createEntity position collision entityType
 
-let movingEntity (position, velocity, texture, color) =
+let movingEntity (position, size, velocity, texture, color) =
     let entityType = Texture (texture, color |> EntityColor)
     let movement =
         {
         EntityId = UninitalizedEntity
         Velocity = velocity
         } |> Movement
-    movement :: createEntity position entityType
+    movement :: createEntity position size entityType
 
-let texturedEntity (position, texture, color) =
+let texturedEntity (position, size, texture, color) =
     let entityType = Texture (texture, color |> EntityColor)
-    createEntity position entityType
+    createEntity position size entityType
 
 let initalizeEntities index (components: Component list) =
     let entityId = EntityId index

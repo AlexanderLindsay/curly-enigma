@@ -1,10 +1,8 @@
 module Core.Component.Functions
 
 open Core.Component.Types
-open SharpDX.Direct3D9
-open SharpDX.Direct3D9
 
-let createColor (r,g,b,a) =
+let makeColor r g b a =
     {
         R = r;
         G = g;
@@ -12,12 +10,15 @@ let createColor (r,g,b,a) =
         A = a;
     }
 
+let createColor (r,g,b,a) =
+    makeColor r g b a
+
 // type Getters/Checkers
 let getVisual comp =
     match comp with
     | WorldPosition _ -> None
     | Visual v -> Some v
-    | Movement m -> None
+    | Movement _ -> None
 
 let getTextured visual =
     match visual with
@@ -46,13 +47,13 @@ let getAllComponents (system: ComponentSystem) =
     | ComponentSystem cs ->
         cs
         |> Map.toSeq
-        |> Seq.collect (fun (k,v) -> v)
+        |> Seq.collect (fun (_,v) -> v)
 
 let toEntityGroup (system: ComponentSystem) =
     system
     |> getAllComponents
     |> Seq.groupBy (fun c -> c.EntityId)
-    |> Seq.map (fun (_, comps) ->
+    |> Seq.map (fun (id, comps) ->
         comps
         |> Seq.fold (fun g c ->
             match c with
@@ -68,7 +69,7 @@ let toEntityGroup (system: ComponentSystem) =
                 { g with
                     Movement = Some m;
                 }
-        ) emptyGroup
+        ) { emptyGroup with EntityId = id }
     )
 
 let toComponents group =

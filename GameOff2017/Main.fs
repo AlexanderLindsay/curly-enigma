@@ -21,9 +21,10 @@ type GameRoot () as gr =
     let mutable componentSystem =
         lazy (
             [
-                simpleEntity ((50,50), (20, 20), (120, 200, 10, 255));
-                texturedEntity ((100, 100), "dot", (0,0,255,255))
-                movingEntity ((200,200), (0.5f,0.5f), "dot", (255,0,0,255))
+                simpleEntity ((50,50), (20.0f,20.0f), (20, 20), (120, 200, 10, 255));
+                texturedEntity ((100, 100), (50.0f,50.0f), "dot", (0,0,255,255));
+                texturedEntity ((300, 200), (50.0f,50.0f), "dot", (0,100,100,255));
+                movingEntity ((200,200), (50.0f,50.0f), (0.5f,0.0f), "dot", (0,10,130,255));
             ]
             |> List.toSeq
             |> Seq.mapi initalizeEntities
@@ -47,8 +48,7 @@ type GameRoot () as gr =
             componentSystem.Value
             |> TextureManager.loadTextures gr.Content
         effectMap <-
-            componentSystem.Value
-            |> EffectManager.loadEffects gr.Content
+            EffectManager.loadEffects gr.Content
         do componentSystem.Force () |> ignore
         ()
 
@@ -57,6 +57,7 @@ type GameRoot () as gr =
         componentSystem <- lazy (
             current
             |> toEntityGroup
+            |> CollisionManager.resolveCollisions
             |> Seq.map MovementManager.resolveVelocities
             |> fromEntityGroup
         )
@@ -66,13 +67,7 @@ type GameRoot () as gr =
     override gr.Draw (gameTime) =
         do gr.GraphicsDevice.Clear Color.CornflowerBlue
         let draw = drawComponents' textureMap spriteBatch
-        let effect = effectMap.TryFind (EffectId "setColor")
-
-        match effect with
-        | Some effect' ->
-            do spriteBatch.Begin (SpriteSortMode.Deferred, null, null, null, null, effect')
-        | None ->
-            do spriteBatch.Begin()
+        do spriteBatch.Begin()
         componentSystem.Value
         |> draw
         do spriteBatch.End ()

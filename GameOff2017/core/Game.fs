@@ -1,12 +1,26 @@
 module Core.Game
 
 open Component.Types
+open Component.Functions
 
 type GameState =
-| IsAlive
-| IsDead
+| Playing
+| Done
 
 type GameData = {
     GameState: GameState;
-    Components: Lazy<ComponentSystem>;
+    Entities: seq<Entity>;
+    Components: ComponentSystem;
 }
+
+let buildGameData (components, entities) =
+    {
+        GameState = Playing;
+        Entities = 
+            entities 
+            |> Seq.ofList;
+        Components = 
+            components
+            |> Seq.ofList
+            |> buildComponentSystem;
+    }

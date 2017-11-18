@@ -3,6 +3,7 @@ module Managers.VisualManager
 open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics
 
+open Core.Game
 open Core.Component.Types
 open Core.Component.Functions
 
@@ -28,9 +29,9 @@ let private buildTexture (graphics: GraphicsDeviceManager) getTexture visual =
         | Some tex -> tex, colorFromRGBA t.Color
         | None -> new Texture2D(graphics.GraphicsDevice,1,1), Color.White
 
-let drawComponents (graphics: GraphicsDeviceManager) textures (spriteBatch: SpriteBatch) system =
-    system
-    |> toEntityGroup 
+let drawComponents (graphics: GraphicsDeviceManager) textures (spriteBatch: SpriteBatch) (gameData: GameData) =
+    gameData.Components
+    |> toEntityGroup gameData.Entities 
     |> Seq.iter (fun group ->
 
         let pos = group.WorldPosition

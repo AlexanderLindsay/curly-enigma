@@ -5,13 +5,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="core/ComponentTypes.fs" />
-    <Compile Include="core/Game.fs" />
     <Compile Include="core/ComponentFunctions.fs" />
+    <Compile Include="core/Game.fs" />
     <Compile Include="managers/VisualManager.fs" />
     <Compile Include="managers/TextureManager.fs" />
     <Compile Include="managers/EffectManager.fs" />
     <Compile Include="managers/MovementManager.fs" />
     <Compile Include="managers/CollisionManager.fs" />
+    <Compile Include="managers/InputManager.fs" />
     <Compile Include="EntityGenerator.fs" />
     <Compile Include="Main.fs" />
     <Compile Include="GameOff2017.fs" />

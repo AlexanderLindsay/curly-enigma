@@ -43,7 +43,7 @@ let private checkForCollisions entities entity position =
     | Some box ->
         entities
         |> Seq.filter (fun e ->
-            e.EntityId <> entity.EntityId
+            e.Entity.Id <> entity.Entity.Id
         )
         |> Seq.exists (fun e ->
             match e.WorldPosition with

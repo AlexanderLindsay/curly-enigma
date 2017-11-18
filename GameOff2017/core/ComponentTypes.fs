@@ -4,8 +4,15 @@ type EntityId =
     | UninitalizedEntity
     | EntityId of int
 
+type EntityType =
+    | Player
+    | Npc
+
 type Entity =
-    { Id: EntityId }
+    { 
+        Id: EntityId;
+        Type: EntityType;
+    }
 
 type Collider =
     | NoCollision
@@ -110,14 +117,14 @@ type Component =
 
 type ComponentGroup =
     {
-        EntityId: EntityId;
+        Entity: Entity;
         WorldPosition: WorldPositionComponent option;
         Visual: VisualComponent option;
         Movement: MovementComponent option;
     }
-let emptyGroup =
+let emptyGroup entity =
     { 
-    EntityId = UninitalizedEntity;
+    Entity = entity;
     WorldPosition = None;
     Visual = None;
     Movement = None;

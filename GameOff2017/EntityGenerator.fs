@@ -74,9 +74,20 @@ let texturedEntity (position, size, texture, color) =
     let entityType = Texture (texture, color |> EntityColor)
     createEntity position size entityType
 
-let initalizeEntities index (components: Component list) =
+let player entity =
+    Player, entity
+
+let npc entity =
+    Npc, entity
+
+let initalizeEntities index (entityType,(components: Component list)) =
     let entityId = EntityId index
     components
     |> List.map (fun comp ->
-        comp.UpdateId entityId
+        let entity = 
+            {
+                Id = entityId;
+                Type = entityType;
+            }
+        (comp.UpdateId entityId, entity)
     )

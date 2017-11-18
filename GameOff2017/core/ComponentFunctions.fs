@@ -49,11 +49,17 @@ let getAllComponents (system: ComponentSystem) =
         |> Map.toSeq
         |> Seq.collect (fun (_,v) -> v)
 
-let toEntityGroup (system: ComponentSystem) =
+let toEntityGroup entities (system: ComponentSystem) =
+    let entityMap =
+        entities
+        |> Seq.map (fun e -> e.Id, e)
+        |> Map.ofSeq
+
     system
     |> getAllComponents
     |> Seq.groupBy (fun c -> c.EntityId)
     |> Seq.map (fun (id, comps) ->
+        let entity = entityMap.Item id
         comps
         |> Seq.fold (fun g c ->
             match c with
@@ -69,7 +75,7 @@ let toEntityGroup (system: ComponentSystem) =
                 { g with
                     Movement = Some m;
                 }
-        ) { emptyGroup with EntityId = id }
+        ) (emptyGroup entity)
     )
 
 let toComponents group =

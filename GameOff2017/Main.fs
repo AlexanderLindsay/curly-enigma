@@ -7,7 +7,9 @@ open Component.Types
 open Component.Functions
 open Managers
 open EntityGenerator
+open Game
 open System
+open Microsoft.Xna.Framework.Input
 
 type GameRoot () as gr =
     inherit Game()
@@ -18,19 +20,17 @@ type GameRoot () as gr =
     let mutable spriteBatch = Unchecked.defaultof<SpriteBatch>
     let drawComponents' = VisualManager.drawComponents graphics
 
-    let mutable componentSystem =
-        lazy (
-            [
-                simpleEntity ((50,50), (20.0f,20.0f), (20, 20), (120, 200, 10, 255));
-                texturedEntity ((100, 100), (50.0f,50.0f), "dot", (0,0,255,255));
-                texturedEntity ((300, 200), (50.0f,50.0f), "dot", (0,100,100,255));
-                movingEntity ((200,200), (50.0f,50.0f), (0.5f,0.0f), "dot", (0,10,130,255));
-            ]
-            |> List.toSeq
-            |> Seq.mapi initalizeEntities
-            |> Seq.collect id
-            |> buildComponentSystem
-        )
+    let mutable gameData =
+        [
+            npc <| simpleEntity ((50,50), (20.0f,20.0f), (20, 20), (120, 200, 10, 255));
+            player <| movingEntity ((100, 100), (50.0f,50.0f), (0.0f,0.0f), "dot", (0,0,255,255));
+            npc <| texturedEntity ((300, 200), (50.0f,50.0f), "dot", (0,100,100,255));
+            npc <| movingEntity ((200,200), (50.0f,50.0f), (0.5f,0.0f), "dot", (0,10,130,255));
+        ]
+        |> List.mapi initalizeEntities
+        |> List.collect id
+        |> List.unzip
+        |> buildGameData
     
     let mutable textureMap =
         Map.empty<TextureId,Texture2D>
@@ -45,30 +45,32 @@ type GameRoot () as gr =
     
     override gr.LoadContent() =
         textureMap <-
-            componentSystem.Value
+            gameData.Components
             |> TextureManager.loadTextures gr.Content
         effectMap <-
             EffectManager.loadEffects gr.Content
-        do componentSystem.Force () |> ignore
         ()
 
     override gr.Update (gameTime) =
-        let current = componentSystem.Value
-        componentSystem <- lazy (
-            current
-            |> toEntityGroup
-            |> CollisionManager.resolveCollisions
-            |> Seq.map MovementManager.resolveVelocities
-            |> fromEntityGroup
-        )
-        do componentSystem.Force () |> ignore
+        let keyboardState = Keyboard.GetState()
+        let handleInput' = InputManager.handleInput keyboardState
+        gameData <- 
+            { gameData with
+                Components = 
+                    gameData.Components
+                    |> toEntityGroup gameData.Entities
+                    |> Seq.map handleInput'
+                    |> CollisionManager.resolveCollisions
+                    |> Seq.map MovementManager.resolveVelocities
+                    |> fromEntityGroup
+            }
         ()
     
     override gr.Draw (gameTime) =
         do gr.GraphicsDevice.Clear Color.CornflowerBlue
         let draw = drawComponents' textureMap spriteBatch
         do spriteBatch.Begin()
-        componentSystem.Value
+        gameData
         |> draw
         do spriteBatch.End ()
         ()

@@ -29,3 +29,15 @@ let resolveVelocities entityGroup =
             WorldPosition = updatePosition position movement |> Some;
             Movement = Some movement
         }
+
+let applyMovement adjustment components =
+    match components.Movement with
+    | None -> components
+    | Some movement ->
+        let movement' =
+            { movement with
+                Velocity = adjustment movement.Velocity
+            }
+        { components with
+            Movement = Some movement'
+        }

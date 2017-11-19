@@ -74,8 +74,13 @@ let texturedEntity (position, size, texture, color) =
     let entityType = Texture (texture, color |> EntityColor)
     createEntity position size entityType
 
-let player entity =
-    Player, entity
+let player speed duration entity =
+    let state = {
+        Speed = speed;
+        MovementDuration = duration;
+        Activity = Standing;
+    }
+    Player state, entity
 
 let npc entity =
     Npc, entity

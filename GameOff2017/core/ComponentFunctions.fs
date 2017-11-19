@@ -49,7 +49,7 @@ let getAllComponents (system: ComponentSystem) =
         |> Map.toSeq
         |> Seq.collect (fun (_,v) -> v)
 
-let toEntityGroup entities (system: ComponentSystem) =
+let toEntityGroup (entities, (system: ComponentSystem)) =
     let entityMap =
         entities
         |> Seq.map (fun e -> e.Id, e)
@@ -98,8 +98,13 @@ let toComponents group =
     ] |> List.toSeq
 
 let fromEntityGroup groups =
-    groups
-    |> Seq.map toComponents
-    |> Seq.collect id
-    |> Seq.choose id
-    |> buildComponentSystem
+    let entities =
+        groups
+        |> Seq.map (fun g -> g.Entity)
+    let system =
+        groups
+        |> Seq.map toComponents
+        |> Seq.collect id
+        |> Seq.choose id
+        |> buildComponentSystem
+    entities,system

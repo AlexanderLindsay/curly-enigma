@@ -4,8 +4,25 @@ type EntityId =
     | UninitalizedEntity
     | EntityId of int
 
+type Speed =
+    | Speed of float32
+
+type Duration =
+    | Duration of float32
+
+type PlayerActivity =
+    | Standing
+    | Moving of Duration
+
+type PlayerState =
+    {
+    Speed: Speed;
+    MovementDuration: Duration;
+    Activity: PlayerActivity;
+    }
+
 type EntityType =
-    | Player
+    | Player of PlayerState
     | Npc
 
 type Entity =

@@ -30,8 +30,8 @@ let private buildTexture (graphics: GraphicsDeviceManager) getTexture visual =
         | None -> new Texture2D(graphics.GraphicsDevice,1,1), Color.White
 
 let drawComponents (graphics: GraphicsDeviceManager) textures (spriteBatch: SpriteBatch) (gameData: GameData) =
-    gameData.Components
-    |> toEntityGroup gameData.Entities 
+    (gameData.Entities, gameData.Components)
+    |> toEntityGroup
     |> Seq.iter (fun group ->
 
         let pos = group.WorldPosition

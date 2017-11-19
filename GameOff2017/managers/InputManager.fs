@@ -4,48 +4,66 @@ open Core.Component.Types
 
 open Microsoft.Xna.Framework.Input
 
-let applyMovement components adjustment =
-    match components.Movement with
-    | None -> components
-    | Some movement ->
-        let movement' =
-            { movement with
-                Velocity = adjustment movement.Velocity
+let changePlayerState duration components =
+    match components.Entity.Type with
+    | Player state ->
+        let state' = 
+            { state with 
+                Activity = Moving duration
             }
-        { components with
-            Movement = Some movement'
+        let entity' =
+            { components.Entity with
+                Type = Player state'
+            }
+        { components with 
+            Entity = entity'
         }
+    | _ -> components
 
-let private moveLeft delta components =
-    applyMovement components (fun (x,y) -> x - delta,y)
+let applyMovement = MovementManager.applyMovement
 
-let private moveRight delta components =
-    applyMovement components (fun (x,y) -> x + delta,y)
+let private moveLeft speed duration components =
+    components
+    |> applyMovement (fun (_,y) -> -1.0f * speed,y)
+    |> changePlayerState duration
 
-let private moveUp delta components =
-    applyMovement components (fun (x,y) -> x,y - delta)
+let private moveRight speed duration components =
+    components
+    |> applyMovement (fun (_,y) -> speed,y)
+    |> changePlayerState duration
 
-let private moveDown delta components =
-    applyMovement components (fun (x,y) -> x,y + delta)
+let private moveUp speed duration components =
+    components
+    |> applyMovement (fun (x,_) -> x,-1.0f * speed)
+    |> changePlayerState duration
 
-let private handleKey key components =
-    let delta = 1.0f
+let private moveDown speed duration components =
+    components
+    |> applyMovement (fun (x,_) -> x,speed)
+    |> changePlayerState duration
+
+let private handleKey key state components =
+    let (Speed speed) = state.Speed
+    let duration = state.MovementDuration
     match key with
     | Keys.Left ->
-        moveLeft delta components
+        moveLeft speed duration components
     | Keys.Right ->
-        moveRight delta components
+        moveRight speed duration components
     | Keys.Up ->
-        moveUp delta components
+        moveUp speed duration components
     | Keys.Down ->
-        moveDown delta components
+        moveDown speed duration components
     | _ -> components
 
 let handleInput (state: KeyboardState) components =
     let keys = state.GetPressedKeys() |> Array.toList
     match components.Entity.Type with
-    | Player ->
-        keys
-        |> List.fold (fun state key -> handleKey key state ) components
+    | Player state ->
+        match state.Activity with
+        | Standing ->
+            keys
+            |> List.fold (fun comps key -> handleKey key state comps ) components
+        | _ -> components
     | _ -> components
 

@@ -387,6 +387,7 @@ _Pvt_Extensions
 !.paket/paket.bootstrapper.exe
 paket-files/
 .paket/Paket.Restore.targets
+.paket/paket.targets
 
 # FAKE - F# Make
 .fake/

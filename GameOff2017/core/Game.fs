@@ -5,26 +5,31 @@ open Component.Functions
 
 open Microsoft.Xna.Framework.Input
 
+type PlayData = {
+    Entities: seq<Entity>;
+    Components: ComponentSystem;
+}
+
 type GameState =
-| Playing
+| Playing of PlayData
 | Done
 
 type GameData = {
     GameState: GameState;
-    Entities: seq<Entity>;
-    Components: ComponentSystem;
     PreviousKeyboardState: KeyboardState option;
 }
 
 let buildGameData (components, entities) =
-    {
-        GameState = Playing;
+    let playState = {
         Entities = 
             entities 
             |> Seq.ofList;
-        Components = 
+        Components =
             components
             |> Seq.ofList
             |> buildComponentSystem;
+    }
+    {
+        GameState = Playing playState;
         PreviousKeyboardState = None;
     }

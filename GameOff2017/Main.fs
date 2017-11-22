@@ -11,6 +11,7 @@ open Component.Functions
 open Managers
 open EntityGenerator
 open Game
+open Scenes
 
 type GameRoot () as gr =
     inherit Game()
@@ -19,7 +20,6 @@ type GameRoot () as gr =
 
     let graphics = new GraphicsDeviceManager(gr)
     let mutable spriteBatch = Unchecked.defaultof<SpriteBatch>
-    let drawComponents' = VisualManager.drawComponents graphics
 
     let mutable gameData =
         [
@@ -45,8 +45,12 @@ type GameRoot () as gr =
         ()
     
     override gr.LoadContent() =
+        let components =
+            match gameData.GameState with
+            | Playing data -> data.Components
+            | Done -> [] |> buildComponentSystem
         textureMap <-
-            gameData.Components
+            components
             |> TextureManager.loadTextures gr.Content
         effectMap <-
             EffectManager.loadEffects gr.Content
@@ -54,34 +58,23 @@ type GameRoot () as gr =
 
     override gr.Update (gameTime) =
         let currentKeyboardState = Keyboard.GetState()
-        let handleInput' = InputManager.handleInput gameData.PreviousKeyboardState currentKeyboardState
-        let updatePlayer' = PlayerManager.updatePlayer gameTime.ElapsedGameTime
 
-        let update = 
-            handleInput'
-            >> MovementManager.resolveVelocities 
-            >> updatePlayer'
-
-        let (entities', components') = 
-            (gameData.Entities, gameData.Components)
-            |> toEntityGroup
-            |> CollisionManager.resolveCollisions
-            |> Seq.map update
-            |> fromEntityGroup
+        let state' = 
+            match gameData.GameState with
+            | Playing data ->
+                PlayingScene.update gameTime currentKeyboardState gameData data
+            | Done -> Done
 
         gameData <- 
             { gameData with
+                GameState = state';
                 PreviousKeyboardState = Some currentKeyboardState;
-                Components = components';
-                Entities = entities';
             }
         ()
     
     override gr.Draw (gameTime) =
-        do gr.GraphicsDevice.Clear Color.CornflowerBlue
-        let draw = drawComponents' textureMap spriteBatch
-        do spriteBatch.Begin()
-        gameData
-        |> draw
-        do spriteBatch.End ()
-        ()
+        match gameData.GameState with
+        | Playing data ->
+            PlayingScene.draw graphics.GraphicsDevice textureMap spriteBatch data
+            ()
+        | Done -> ()

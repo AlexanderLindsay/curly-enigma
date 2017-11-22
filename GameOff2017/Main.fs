@@ -1,15 +1,16 @@
 module Core.Main
 
+open System
+
 open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics
+open Microsoft.Xna.Framework.Input
 
 open Component.Types
 open Component.Functions
 open Managers
 open EntityGenerator
 open Game
-open System
-open Microsoft.Xna.Framework.Input
 
 type GameRoot () as gr =
     inherit Game()
@@ -52,8 +53,8 @@ type GameRoot () as gr =
         ()
 
     override gr.Update (gameTime) =
-        let keyboardState = Keyboard.GetState()
-        let handleInput' = InputManager.handleInput keyboardState
+        let currentKeyboardState = Keyboard.GetState()
+        let handleInput' = InputManager.handleInput gameData.PreviousKeyboardState currentKeyboardState
         let updatePlayer' = PlayerManager.updatePlayer gameTime.ElapsedGameTime
 
         let update = 
@@ -70,8 +71,9 @@ type GameRoot () as gr =
 
         gameData <- 
             { gameData with
-                Components = components'
-                Entities = entities'
+                PreviousKeyboardState = Some currentKeyboardState;
+                Components = components';
+                Entities = entities';
             }
         ()
     

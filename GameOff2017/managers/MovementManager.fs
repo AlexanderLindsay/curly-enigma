@@ -1,10 +1,6 @@
 module Managers.MovementManager
 
-open Microsoft.Xna.Framework
-open Microsoft.Xna.Framework.Graphics
-
 open Core.Component.Types
-open Core.Component.Functions
 
 let private updatePosition position movement =
     let x,y = position.Position

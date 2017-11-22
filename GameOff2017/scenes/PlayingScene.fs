@@ -10,7 +10,7 @@ open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics
 open Microsoft.Xna.Framework.Input
 
-let buildLevel () = 
+let buildLevel left right top bottom = 
     let components,entities =
         [
             player <| Speed 1.0f <| Duration 300.0f <| movingEntity ((400, 400), (50.0f,50.0f), (0.0f,0.0f), "dot", (0,0,255,255));
@@ -25,6 +25,13 @@ let buildLevel () =
         |> List.collect id
         |> List.unzip
     {
+        World = 
+            {
+                Left = left;
+                Right = right;
+                Top = top;
+                Bottom = bottom;
+            };
         Components = components |> buildComponentSystem;
         Entities = entities;
     }
@@ -33,6 +40,7 @@ let update (gameTime: GameTime) (currentKeyboardState: KeyboardState) gameData p
     let keys = InputManager.getPressedKeys gameData.PreviousKeyboardState currentKeyboardState
     let handleInput' = InputManager.handleInput keys
     let updatePlayer' = PlayerManager.updatePlayer gameTime.ElapsedGameTime
+    let updateNpc' = NpcManager.updateNpc playState.World
 
     let hasEscape = 
         keys
@@ -45,12 +53,13 @@ let update (gameTime: GameTime) (currentKeyboardState: KeyboardState) gameData p
             handleInput'
             >> MovementManager.resolveVelocities 
             >> updatePlayer'
+            >> updateNpc'
 
         let (entities', components') = 
             (playState.Entities, playState.Components)
             |> toEntityGroup
-            |> CollisionManager.resolveCollisions
             |> Seq.map update
+            |> CollisionManager.resolveCollisions
             |> fromEntityGroup
         
         let playState' = 

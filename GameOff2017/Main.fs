@@ -22,7 +22,7 @@ type GameRoot () as gr =
     let mutable spriteBatch = Unchecked.defaultof<SpriteBatch>
 
     let mutable gameData =
-        PlayingScene.buildLevel ()
+        PlayingScene.buildLevel -200.0f 1000.0f -200.0f 1000.0f
         |> buildGameData
     
     let mutable textureMap =

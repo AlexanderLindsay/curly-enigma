@@ -1,12 +1,33 @@
 module Scenes.PlayingScene
 
 open Core.Game
+open Core.Component.Types
 open Core.Component.Functions
 open Managers
+open EntityGenerator
 
 open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics
 open Microsoft.Xna.Framework.Input
+
+let buildLevel () = 
+    let components,entities =
+        [
+            player <| Speed 1.0f <| Duration 300.0f <| movingEntity ((400, 400), (50.0f,50.0f), (0.0f,0.0f), "dot", (0,0,255,255));
+            npc <| movingEntity ((200,200), (50.0f,50.0f), (2.0f,0.0f), "dot", (0,10,130,255));
+            npc <| movingEntity ((0,200), (50.0f,50.0f), (2.0f,0.0f), "dot", (0,10,130,255));
+            npc <| movingEntity ((-200,200), (50.0f,50.0f), (2.0f,0.0f), "dot", (0,10,130,255));
+            npc <| movingEntity ((800,100), (50.0f,50.0f), (-2.0f,0.0f), "dot", (0,10,130,255));
+            npc <| movingEntity ((1000,100), (50.0f,50.0f), (-2.0f,0.0f), "dot", (0,10,130,255));
+            npc <| movingEntity ((200,100), (50.0f,50.0f), (-2.0f,0.0f), "dot", (0,10,130,255));
+        ]
+        |> List.mapi initalizeEntities
+        |> List.collect id
+        |> List.unzip
+    {
+        Components = components |> buildComponentSystem;
+        Entities = entities;
+    }
 
 let update (gameTime: GameTime) (currentKeyboardState: KeyboardState) gameData playState =
     let keys = InputManager.getPressedKeys gameData.PreviousKeyboardState currentKeyboardState

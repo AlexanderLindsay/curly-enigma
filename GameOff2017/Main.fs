@@ -22,15 +22,7 @@ type GameRoot () as gr =
     let mutable spriteBatch = Unchecked.defaultof<SpriteBatch>
 
     let mutable gameData =
-        [
-            npc <| simpleEntity ((50,50), (20.0f,20.0f), (20, 20), (120, 200, 10, 255));
-            player <| Speed 1.0f <| Duration 300.0f <| movingEntity ((100, 100), (50.0f,50.0f), (0.0f,0.0f), "dot", (0,0,255,255));
-            npc <| texturedEntity ((300, 200), (50.0f,50.0f), "dot", (0,100,100,255));
-            npc <| movingEntity ((200,200), (50.0f,50.0f), (0.5f,0.0f), "dot", (0,10,130,255));
-        ]
-        |> List.mapi initalizeEntities
-        |> List.collect id
-        |> List.unzip
+        PlayingScene.buildLevel ()
         |> buildGameData
     
     let mutable textureMap =

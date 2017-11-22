@@ -19,16 +19,7 @@ type GameData = {
     PreviousKeyboardState: KeyboardState option;
 }
 
-let buildGameData (components, entities) =
-    let playState = {
-        Entities = 
-            entities 
-            |> Seq.ofList;
-        Components =
-            components
-            |> Seq.ofList
-            |> buildComponentSystem;
-    }
+let buildGameData playState =
     {
         GameState = Playing playState;
         PreviousKeyboardState = None;

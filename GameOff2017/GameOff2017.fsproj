@@ -16,6 +16,7 @@
     <Compile Include="managers/PlayerManager.fs" />
     <Compile Include="EntityGenerator.fs" />
     <Compile Include="scenes/PlayingScene.fs" />
+    <Compile Include="scenes/DoneScene.fs" />
     <Compile Include="Main.fs" />
     <Compile Include="GameOff2017.fs" />
     <None Include="App.config" />

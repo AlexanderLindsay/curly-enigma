@@ -77,4 +77,6 @@ type GameRoot () as gr =
         | Playing data ->
             PlayingScene.draw graphics.GraphicsDevice textureMap spriteBatch data
             ()
-        | Done -> ()
+        | Done ->
+            DoneScene.draw graphics.GraphicsDevice
+            ()

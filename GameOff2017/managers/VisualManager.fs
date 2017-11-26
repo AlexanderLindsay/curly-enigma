@@ -14,11 +14,11 @@ let private vectorFromPosition position =
     let (x,y) = position.Position
     Vector2(x,y)
 
-let private buildTexture (graphics: GraphicsDeviceManager) getTexture visual =
+let private buildTexture (graphics: GraphicsDevice) getTexture visual =
     match visual with
     | ColoredSquare cs ->
         let width,height = cs.Size
-        let texture = new Texture2D(graphics.GraphicsDevice, width,height)
+        let texture = new Texture2D(graphics, width,height)
         let size = width * height
         let color = colorFromRGBA cs.Color
         let data = Array.init size (fun _ -> color)
@@ -27,11 +27,10 @@ let private buildTexture (graphics: GraphicsDeviceManager) getTexture visual =
     | Textured t ->
         match getTexture t.TextureId with
         | Some tex -> tex, colorFromRGBA t.Color
-        | None -> new Texture2D(graphics.GraphicsDevice,1,1), Color.White
+        | None -> new Texture2D(graphics,1,1), Color.White
 
-let drawComponents (graphics: GraphicsDeviceManager) textures (spriteBatch: SpriteBatch) (gameData: GameData) =
-    (gameData.Entities, gameData.Components)
-    |> toEntityGroup
+let drawComponents (graphics: GraphicsDevice) textures (spriteBatch: SpriteBatch) entityGroups =
+    entityGroups
     |> Seq.iter (fun group ->
 
         let pos = group.WorldPosition

@@ -56,14 +56,24 @@ let private handleKey key state components =
         moveDown speed duration components
     | _ -> components
 
-let handleInput (state: KeyboardState) components =
-    let keys = state.GetPressedKeys() |> Array.toList
-    match components.Entity.Type with
+let getPressedKeys (previousState: KeyboardState option) (currentState: KeyboardState) =
+    let previouslyPressed =
+        match previousState with
+        | None -> []
+        | Some state ->
+            state.GetPressedKeys()
+            |> Array.toList
+
+    currentState.GetPressedKeys() 
+        |> Array.toList
+        |> List.except previouslyPressed
+
+let handleInput keys componentGroup =
+    match componentGroup.Entity.Type with
     | Player state ->
         match state.Activity with
         | Standing ->
             keys
-            |> List.fold (fun comps key -> handleKey key state comps ) components
-        | _ -> components
-    | _ -> components
-
+            |> List.fold (fun comps key -> handleKey key state comps ) componentGroup
+        | _ -> componentGroup
+    | _ -> componentGroup

@@ -87,3 +87,18 @@ let resolveCollisions groups =
             | true -> collide entity
             | false -> entity
     )
+
+let hasPlayerCollided groups =
+    groups
+    |> Seq.map (fun entity ->
+        match entity.Entity.Type with
+        | Player _ ->
+            match entity.WorldPosition with
+            | None -> None
+            | Some position -> 
+                let collision = checkForCollisions groups entity position
+                Some collision
+        | _ -> None
+    )
+    |> Seq.choose id
+    |> Seq.fold (||) false

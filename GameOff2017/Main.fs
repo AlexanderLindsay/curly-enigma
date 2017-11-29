@@ -55,7 +55,8 @@ type GameRoot () as gr =
             match gameData.GameState with
             | Playing data ->
                 PlayingScene.update gameTime currentKeyboardState gameData data
-            | Done -> Done
+            | Done ->
+                DoneScene.update gameTime currentKeyboardState gameData
 
         gameData <- 
             { gameData with

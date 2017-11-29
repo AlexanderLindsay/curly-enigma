@@ -55,20 +55,30 @@ let update (gameTime: GameTime) (currentKeyboardState: KeyboardState) gameData p
             >> updatePlayer'
             >> updateNpc'
 
-        let (entities', components') = 
+
+        let hasPlayerCollided = 
             (playState.Entities, playState.Components)
             |> toEntityGroup
-            |> Seq.map update
-            |> CollisionManager.resolveCollisions
-            |> fromEntityGroup
+            |> CollisionManager.hasPlayerCollided 
         
-        let playState' = 
-            { playState with
-                Entities = entities';
-                Components = components';
-            }
+        match hasPlayerCollided with
+        | true -> 
+            Done
+        | false ->
 
-        Playing playState'
+            let (entities', components') = 
+                (playState.Entities, playState.Components)
+                |> toEntityGroup
+                |> Seq.map update
+                |> fromEntityGroup
+
+            let playState' = 
+                { playState with
+                    Entities = entities';
+                    Components = components';
+                }
+
+            Playing playState'
 
 let draw (graphics: GraphicsDevice) textureMap spriteBatch playState =
     do graphics.Clear Color.CornflowerBlue

@@ -33,7 +33,7 @@ let private intersect (oneStart,oneEnd) (twoStart,twoEnd) =
 
 let private intersectBox box1 box2 =
     let x = intersect (box1.Left,box1.Right) (box2.Left,box2.Right)
-    let y = intersect (box1.Top,box1.Bottom) (box2.Top,box2.Bottom)
+    let y = intersect (box1.Bottom,box1.Top) (box2.Bottom,box2.Top)
     x && y
 
 let private checkForCollisions entities entity position =
@@ -87,3 +87,18 @@ let resolveCollisions groups =
             | true -> collide entity
             | false -> entity
     )
+
+let hasPlayerCollided groups =
+    groups
+    |> Seq.map (fun entity ->
+        match entity.Entity.Type with
+        | Player _ ->
+            match entity.WorldPosition with
+            | None -> None
+            | Some position -> 
+                let collision = checkForCollisions groups entity position
+                Some collision
+        | _ -> None
+    )
+    |> Seq.choose id
+    |> Seq.fold (||) false

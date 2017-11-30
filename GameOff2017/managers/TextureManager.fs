@@ -4,13 +4,11 @@ open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics
 
 open Core.Component.Types
-open Core.Component.Functions
 
-let loadTextures (content: Content.ContentManager) (system: ComponentSystem) =
-    getComponentsByType system ComponentType.Visual
-    |> Seq.choose getVisual
-    |> Seq.choose getTextured
-    |> Seq.map (fun t -> 
-        let (TextureId path) = t.TextureId
-        t.TextureId, content.Load<Texture2D>(path))
-    |> Map.ofSeq
+let loadTextures (content: Content.ContentManager) textures =
+    textures
+    |> List.map (fun t ->
+        let id = TextureId t
+        id, content.Load<Texture2D>(t)
+    )
+    |> Map.ofList

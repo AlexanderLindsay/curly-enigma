@@ -62,6 +62,9 @@ type EffectId =
 type TextureId =
 | TextureId of string
 
+type FontId =
+| FontId of string
+
 type ColoredSquareComponent =
     {
     EntityId: EntityId;

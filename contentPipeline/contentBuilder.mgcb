@@ -31,3 +31,17 @@
 /processorParam:DebugMode=Auto
 /build:files/SetColor.fx
 
+#begin files/header.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:files/header.spritefont
+
+#begin files/subheader.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:files/subheader.spritefont
+

@@ -3,24 +3,32 @@ module Core.Game
 open Component.Types
 open Component.Functions
 
-type GameState =
-| Playing
-| Done
+open Microsoft.Xna.Framework.Input
 
-type GameData = {
-    GameState: GameState;
+type World = {
+    Left: float32;
+    Right: float32;
+    Top: float32;
+    Bottom: float32;
+}
+
+type PlayData = {
+    World: World;
     Entities: seq<Entity>;
     Components: ComponentSystem;
 }
 
-let buildGameData (components, entities) =
+type GameState =
+| Playing of PlayData
+| Done
+
+type GameData = {
+    GameState: GameState;
+    PreviousKeyboardState: KeyboardState option;
+}
+
+let buildGameData gameState =
     {
-        GameState = Playing;
-        Entities = 
-            entities 
-            |> Seq.ofList;
-        Components = 
-            components
-            |> Seq.ofList
-            |> buildComponentSystem;
+        GameState = gameState;
+        PreviousKeyboardState = None;
     }

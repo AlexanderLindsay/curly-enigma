@@ -27,8 +27,8 @@ type GameData = {
     PreviousKeyboardState: KeyboardState option;
 }
 
-let buildGameData playState =
+let buildGameData gameState =
     {
-        GameState = Playing playState;
+        GameState = gameState;
         PreviousKeyboardState = None;
     }

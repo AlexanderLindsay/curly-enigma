@@ -22,7 +22,10 @@ type GameRoot () as gr =
     let mutable spriteBatch = Unchecked.defaultof<SpriteBatch>
 
     let mutable gameData =
-        PlayingScene.buildLevel -200.0f 1000.0f -200.0f 1000.0f
+        // PlayingScene.buildLevel -200.0f 1000.0f -200.0f 1000.0f
+        // |> Playing
+        // |> buildGameData
+        Done
         |> buildGameData
     
     let mutable textureMap =
@@ -30,6 +33,9 @@ type GameRoot () as gr =
     
     let mutable effectMap =
         Map.empty<EffectId,Effect>
+    
+    let mutable fontsMap =
+        Map.empty<FontId, SpriteFont>
     
     override gr.Initialize() =
         do spriteBatch <- new SpriteBatch(gr.GraphicsDevice)
@@ -42,10 +48,19 @@ type GameRoot () as gr =
             | Playing data -> data.Components
             | Done -> [] |> buildComponentSystem
         textureMap <-
-            components
+            [
+                "dot"
+            ]
             |> TextureManager.loadTextures gr.Content
         effectMap <-
             EffectManager.loadEffects gr.Content
+        fontsMap <-
+            [
+            "header";
+            "subheader";
+            ]
+            |> List.map (fun n -> FontId n,gr.Content.Load<SpriteFont>(n))
+            |> Map.ofList
         ()
 
     override gr.Update (gameTime) =
@@ -71,5 +86,5 @@ type GameRoot () as gr =
             PlayingScene.draw graphics.GraphicsDevice textureMap spriteBatch data
             ()
         | Done ->
-            DoneScene.draw graphics.GraphicsDevice
+            DoneScene.draw graphics.GraphicsDevice fontsMap spriteBatch
             ()
